@@ -339,6 +339,7 @@ View the configuration parameters: `aws ec2 describe-fleets --fleet-ids "${FLEET
 
 <details>
 <summary>Error Message:</summary>
+  
   ```
 ~ $ aws ec2 describe-fleets --fleet-ids "${FLEET_ID}"
 {
