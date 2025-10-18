@@ -234,7 +234,8 @@ Filter list of isntaces using `aws:autoscaling:groupName = EC2SpotWorkshopASG` i
 
   _My Answer:_ Modify the `"InstanceRequirements"` in the configuration file when using the launch template. Specify the Instance Types instead.
   _AWS' Explanation:_ Use a .json file, similar to below:
-  ```cat << EOF > ./asg-policy.json
+  ```
+cat << EOF > ./asg-policy.json
 {
    "LaunchTemplate":{
       "LaunchTemplateSpecification":{
@@ -428,8 +429,10 @@ View the configuration parameters: `aws ec2 describe-fleets --fleet-ids "${FLEET
                 },
 ```
 </details>
+
 ## Optimally running Spot Capacity
 Use CLI to calculate Spot Placement Score:
+
 ```
 cat << EOF > ./sps-input.json
 {
