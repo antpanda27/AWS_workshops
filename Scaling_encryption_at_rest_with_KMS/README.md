@@ -1,7 +1,7 @@
 # Setting Up
 Create `AWS-KMS-Workshop` stack from `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/EnvironmentTemplate.yaml' --output template.yaml`
 
-Create a central stack in another account using `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/central_template.yaml' --output template.yaml`
+Create a central stack in a *different account* using `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/central_template.yaml' --output template.yaml`
 
 # S3 Track
 This module continues you on your journey to address the privacy and compliance challenges of the existing configuration. Based on the recommendation of Amazon Web Services architects, you will:
@@ -64,8 +64,13 @@ This module continues you on your journey to address the privacy and compliance 
   <img width="1244" height="416" alt="image" src="https://github.com/user-attachments/assets/de00ed70-e9e8-4650-9e31-7d6eb8260dff" />
   <img width="1252" height="875" alt="image" src="https://github.com/user-attachments/assets/3c7906fe-4968-445f-91f7-40f3b8a3eb07" />
 
+</details>
 
+## Module 3: Sharing an Encrypted S3 Bucket
 
+<details>
+  <summary>Expand</summary>
+  <img width="1131" height="457" alt="image" src="https://github.com/user-attachments/assets/2deb1617-03e5-47cd-a79a-69b0ef226e19" />
 
-
+  
 </details>
