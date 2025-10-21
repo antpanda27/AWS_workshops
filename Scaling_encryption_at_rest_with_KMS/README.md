@@ -66,11 +66,22 @@ This module continues you on your journey to address the privacy and compliance 
 
 </details>
 
-## Module 3: Sharing an Encrypted S3 Bucket
+## Module 3
+### Sharing an Encrypted S3 Bucket
 
 <details>
   <summary>Expand</summary>
   <img width="1131" height="457" alt="image" src="https://github.com/user-attachments/assets/2deb1617-03e5-47cd-a79a-69b0ef226e19" />
+  <img width="1287" height="414" alt="image" src="https://github.com/user-attachments/assets/36ef9608-128e-4ade-8899-78ad62629995" />
+  <img width="1192" height="578" alt="image" src="https://github.com/user-attachments/assets/21e08691-25c8-4431-b0cf-9ea5ed857913" />
+  <img width="857" height="507" alt="image" src="https://github.com/user-attachments/assets/6b80e696-218f-4bf5-b13e-86d0d60e9eb3" />
+  <img width="729" height="627" alt="image" src="https://github.com/user-attachments/assets/d9536187-c896-4907-ac61-71a1f5ea34d5" />
+
+### Provide Cross Account KMS Access
+  <img width="1288" height="636" alt="image" src="https://github.com/user-attachments/assets/d01788cf-7081-47f6-9414-964f0e45a56c" />
+  <img width="864" height="588" alt="image" src="https://github.com/user-attachments/assets/36aa5850-f990-4203-96db-118b0f958ed2" />
+
+
 
   
 </details>
