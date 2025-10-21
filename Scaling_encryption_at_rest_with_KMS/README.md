@@ -20,7 +20,7 @@ This module continues you on your journey to address the privacy and compliance 
      * Key type: Symmetric
      * Key usage: Encrypt and decrypt
      * Key alias: cloudtrail-s3-encryption-key
-     *
+     * Key administrators: KMS Admin Role
 
   2. Configure CloudTrail to encrypt log data
       <img width="1263" height="375" alt="image" src="https://github.com/user-attachments/assets/f613dd63-283b-481b-98fc-6f17d25194de" />
@@ -81,7 +81,95 @@ This module continues you on your journey to address the privacy and compliance 
   <img width="1288" height="636" alt="image" src="https://github.com/user-attachments/assets/d01788cf-7081-47f6-9414-964f0e45a56c" />
   <img width="864" height="588" alt="image" src="https://github.com/user-attachments/assets/36aa5850-f990-4203-96db-118b0f958ed2" />
 
+</details>
 
+
+# RDS Track
+
+This module continues your journey to address the privacy and compliance challenges of the existing configuration. Based on the recommendation of Amazon Web Services architects, you will:
+
+* Create and assign permissions to a KMS key
+* Encrypt existing RDS resources
+* Troubleshoot AWS KMS permission challenges, and learn how to fix them
+* Enforce encryption on RDS resources
+* Share an encrypted RDS instance with another AWS Account
+
+## Module 1: Manage and Assign KMS Key to RDS Instance
+<details>
+  <summary>Expand</summary>
+
+  ### Configure a KMS CMK and Check RDS Compliance
+  Create a CMK with the following:
+  * Key type: Symmetric
+  * Key usage: Encrypt and decrypt
+  * Key alias: cloudtrail-s3-encryption-key
+  * Key administrators: KMS Admin Role
+    
+  <img width="1643" height="935" alt="image" src="https://github.com/user-attachments/assets/ef31633f-d7a6-46c1-ac24-1044d9013edf" />
+
+  **Review current resources for compliance**
+  Switch to ProjectRole, to check the AWS Config Rules, and in RDS_Storage_Encrypted, check the noncompliant resource.
+
+  <img width="1489" height="605" alt="image" src="https://github.com/user-attachments/assets/32605b16-1a61-4619-bcd6-56ec446bac37" />
+  <img width="1132" height="237" alt="image" src="https://github.com/user-attachments/assets/508b4b7d-c517-4368-acc2-119354a3e1b9" />
+  
+</details>
+
+## Module 2: Remediate Unencrypted RDS Instance
+<details>
+  <summary>Expand</summary>
+
+  ### Create an Encrypted Snapshot
+  Aurora and RDS Dashboard > Databases > Select the RDS instance > Actions > Take Snapshot > Give a Snapshot name > Take snapshot
+  <img width="972" height="533" alt="image" src="https://github.com/user-attachments/assets/c088dce1-dbae-4ad6-b0b6-955586c41272" />
+  Copy snapshot > Name snapshot copy > Enable Encryption > Select CMK created in previous step > Copy snapshot
+  <img width="1662" height="1019" alt="image" src="https://github.com/user-attachments/assets/75da7078-c451-440a-98c9-c78f0918d1f2" />
+
+  ### Grant KMS access to ProjectRole
+  Using Admin Role:
+  <img width="1651" height="1027" alt="image" src="https://github.com/user-attachments/assets/243da319-85a0-488c-b694-86ddea3833de" />
+
+  Return to ProjectRole, and retry copying snapshot = success
+  <img width="1230" height="590" alt="image" src="https://github.com/user-attachments/assets/20513935-a04d-48b8-ad9f-015b1c747585" />
+
+  ### Restore Encrypted Snapshot to the RDS Instance
+  Select encrypted snapshot > Actions > Restore snapshot > Input a name for DB Instance > Select single DB instance > Select db.t3.micro
+  Scroll down to Encryption. Note - enabled by default = restore encrypted snapshot to unencrypted instance.
+  <img width="1661" height="1835" alt="image" src="https://github.com/user-attachments/assets/1823e09e-4d7a-4c36-9114-4b3d292d8230" />
+  <img width="2251" height="321" alt="image" src="https://github.com/user-attachments/assets/0064364d-1681-4672-9363-80470d3c6ec8" />
+
+  **Delete unencrypted resources**
+  _IRL: Ensure clients have failed-over to the new encrypted database, and are functioning correctly before deleting these resources_
+  Select unencrypted snapshot > Actions > Delete snapshot > Delete
+  Databases > selected unencrypted DB instance > Actions > Delete > Uncheck "Create final snapshot" > Check acknowledgement > Delete
+  <img width="1327" height="928" alt="image" src="https://github.com/user-attachments/assets/de1cce43-4e34-4fe6-9197-99902e44551f" />
+
+  **Check Config rule compliance**
+  AWS Config > RDS_Storage_Encrypted > Actions > Re-evaluate
+  Should be compliant
+  <img width="2189" height="251" alt="image" src="https://github.com/user-attachments/assets/c13a15bc-2a8f-43a9-9351-b3b7cbf1535f" />
 
   
 </details>
+
+## Module 3: Creating an Encrypted RDS Instance
+
+### Attempt to create new RDS DB instance w/o encryption
+Use these settings to create a new RDS:
+* Standard Create
+* MySQL
+* Dev/Test
+* Auto-generate password
+* VPC: workshop-vpc, Subnet group: DBSubnetGroup
+* Additional configuration > Uncheck: Enable encryption
+* Uncheck: Enable Enhanced monitoring
+Results in:
+<img width="1649" height="259" alt="image" src="https://github.com/user-attachments/assets/58b23354-dc6f-4ffe-8937-fe1ef45e3887" />
+
+**Review IAM Access for ProjectRole**
+Looking at the "custom" rule:
+<img width="518" height="257" alt="image" src="https://github.com/user-attachments/assets/c266fe5d-c276-41a2-bda5-7f2fe444319d" />
+This enforces ProjectRole to only be able to create encrypted RDS instances. Therefore, enable encryption when creating the DB when as ProjectRole.
+<img width="2253" height="170" alt="image" src="https://github.com/user-attachments/assets/451de265-fb55-46d8-8b14-a87b6d334307" />
+
+
