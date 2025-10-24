@@ -1,4 +1,4 @@
-# Setting Up
+<img width="1665" height="1024" alt="image" src="https://github.com/user-attachments/assets/8818c0ff-6c44-463e-942e-1c05a0310afb" /># Setting Up
 Create `AWS-KMS-Workshop` stack from `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/EnvironmentTemplate.yaml' --output template.yaml`
 
 Create a central stack in a *different account* using `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/central_template.yaml' --output template.yaml`
@@ -14,7 +14,6 @@ This module continues you on your journey to address the privacy and compliance 
 
 ## Module 1: Manage and Assign KMS Key to S3 Bucket
 <details>
-  <summary>Expand</summary>
   
   1. In the KMS Console, create a key with the following settings:
      * Key type: Symmetric
@@ -44,7 +43,6 @@ This module continues you on your journey to address the privacy and compliance 
 
 ## Module 2: Remediating unencrypted objects in an S3 bucket
 <details>
-  <summary>Expand</summary>
   
   <img width="959" height="766" alt="image" src="https://github.com/user-attachments/assets/db27c3b6-3e1c-49da-a123-fc452eaa4e17" />
   <img width="644" height="92" alt="image" src="https://github.com/user-attachments/assets/c6c00462-db90-4335-b80a-72cc3c347cdc" />
@@ -70,7 +68,7 @@ This module continues you on your journey to address the privacy and compliance 
 ### Sharing an Encrypted S3 Bucket
 
 <details>
-  <summary>Expand</summary>
+  
   <img width="1131" height="457" alt="image" src="https://github.com/user-attachments/assets/2deb1617-03e5-47cd-a79a-69b0ef226e19" />
   <img width="1287" height="414" alt="image" src="https://github.com/user-attachments/assets/36ef9608-128e-4ade-8899-78ad62629995" />
   <img width="1192" height="578" alt="image" src="https://github.com/user-attachments/assets/21e08691-25c8-4431-b0cf-9ea5ed857913" />
@@ -96,7 +94,6 @@ This module continues your journey to address the privacy and compliance challen
 
 ## Module 1: Manage and Assign KMS Key to RDS Instance
 <details>
-  <summary>Expand</summary>
 
   ### Configure a KMS CMK and Check RDS Compliance
   Create a CMK with the following:
@@ -117,7 +114,6 @@ This module continues your journey to address the privacy and compliance challen
 
 ## Module 2: Remediate Unencrypted RDS Instance
 <details>
-  <summary>Expand</summary>
 
   ### Create an Encrypted Snapshot
   Aurora and RDS Dashboard > Databases > Select the RDS instance > Actions > Take Snapshot > Give a Snapshot name > Take snapshot
@@ -153,7 +149,8 @@ This module continues your journey to address the privacy and compliance challen
 </details>
 
 ## Module 3: Creating an Encrypted RDS Instance
-
+<details>
+  
 ### Attempt to create new RDS DB instance w/o encryption
 Use these settings to create a new RDS:
 * Standard Create
@@ -164,12 +161,142 @@ Use these settings to create a new RDS:
 * Additional configuration > Uncheck: Enable encryption
 * Uncheck: Enable Enhanced monitoring
 Results in:
+
 <img width="1649" height="259" alt="image" src="https://github.com/user-attachments/assets/58b23354-dc6f-4ffe-8937-fe1ef45e3887" />
 
 **Review IAM Access for ProjectRole**
 Looking at the "custom" rule:
+
 <img width="518" height="257" alt="image" src="https://github.com/user-attachments/assets/c266fe5d-c276-41a2-bda5-7f2fe444319d" />
+
 This enforces ProjectRole to only be able to create encrypted RDS instances. Therefore, enable encryption when creating the DB when as ProjectRole.
 <img width="2253" height="170" alt="image" src="https://github.com/user-attachments/assets/451de265-fb55-46d8-8b14-a87b6d334307" />
+</details>
+
+## Module 4: Sharing Encrypted RDS Snapshot
+<details>
+
+  <img width="1140" height="657" alt="image" src="https://github.com/user-attachments/assets/fa53b24a-e6d5-4110-ad24-326a58cdb6ab" />
+
+  Error (due to permissions):
+  
+  <img width="737" height="635" alt="image" src="https://github.com/user-attachments/assets/fa9eae0b-6c6e-4c22-a9b4-120c838b3194" />
+
+  Adjusting RMS Key as Admin Role:
+  
+  <img width="542" height="444" alt="image" src="https://github.com/user-attachments/assets/5bfb5243-7904-4096-bfeb-6410c293f718" />
+  
+  <img width="712" height="577" alt="image" src="https://github.com/user-attachments/assets/60956938-45ce-4b19-9572-e61ad4fc0f02" />
+
+</details>
+
+# EBS Track
+
+This module continues your journey to address the privacy and compliance challenges of the existing configuration. Based on the recommendation of Amazon Web Services architects, you will:
+* Create and assign permissions to a KMS key
+* Encrypt existing EBS volumes
+* Troubleshoot AWS KMS permission challenges, and learn how to fix them
+* Enforce encryption on EBS volumes
+* Share an encrypted EBS volume with another AWS Account
+
+## Module 1: Manage & Assign KMS Key to an EBS Volume
+<details>
+  
+  Using an Admin role create a KMS CMK Key with:
+  
+  * Key type: Symmetric
+  * Key material origin: KMS
+  * Key alias: workshop-key-ebs
+  * Admin permissions: Admin role
+  * Key usage permissions: Participant role
+    
+</details>
+
+## Module 2: Remediate Un-encrypted EBS Volume
+<details>
+
+  ### Create a new Un-Encrypted Volume
+  EC2 > Elastic Block Store > Volumes > Create Volumes
+  Leave everything default - ensure *Encrypt this volume* is unchecked
+  Tag: Key: `Name`, Value: `WS_Unencrypted_Volume`
+
+  ### Create a new Encrypted Volume
+  EC2 > Elastic Block Store > Volumes > Create Volumes
+  Check *Encrypt this volume*
+  KMS Key: select `workshop-key-ebs`
+  Tag: Key: `Name`, Value: `WS_New_Encrypted_Volume`
+
+  <img width="958" height="192" alt="image" src="https://github.com/user-attachments/assets/4906fe54-fed7-4c65-8e1b-aba2aa22564f" />
+
+  ### Enable default encryption for EBS Volumes
+  EC2 Dashboard > Account attributes: Settings: Data protection and security >
+  <img width="1683" height="970" alt="image" src="https://github.com/user-attachments/assets/1e1095ea-ccea-42a0-ab0a-308f6aeaf7df" />
+  Select *Enable* -> Use the suggested `alias/aws/ebs` or symmetric CMK created earlier. -> Update
+
+  ### Encrypting a new EBS Volume while launching EC2 Instance
+  Launch Instance with:
+  * AMI: Free Tier
+  * Architecture: 64-bit (x86)
+  * t2.micro (unavailable in ap-southeast-2 free tier)
+  * VPC: workshop-vpc-ebs
+  * Storage: Advanced > Encrypted: Encrypted > KMS Key: workshop-key-ebs
+  <img width="1096" height="689" alt="image" src="https://github.com/user-attachments/assets/39b5b26e-f4f7-45e1-b23e-8fe3afd77a49" />
+
+
+  ### Encrypting existing EBS volume
+  Elastic Block Store > Volumes > WS_Unencrypted_Volume > Actions > Create Snapshot
+  Description: Un-encrypted snapshot of un-encrypted Volume
+  Add tag: Key: `Name`, Value: `WS_Unencrypted_Snapshot`
+
+  Copy EBS Snapshot:
+  
+  <img width="970" height="994" alt="image" src="https://github.com/user-attachments/assets/86af8670-05c8-473a-8357-e9682cb64288" />
+
+  Select copy > Create Volume from snapshot > Add key: Name, Value: Encrypted_Volume > Create Volume
+  
+  <img width="1665" height="2728" alt="image" src="https://github.com/user-attachments/assets/6f6e3eb6-d6a9-481e-bb84-b2b9032519a2" />
+
+</details>
+
+## Module 3: Sharing EBS Volume
+<details>
+  
+  ** **It is not possible to share an encrypted EBS Volume. Instead, create and share an encrypted EBS snapshot.**
+
+  Snapshots > Select snapshot > Actions > Snapshot settings > Modify permissions > Add central account ID
+  * Ensure snapshot is made **private**
+  * 
+  <img width="738" height="730" alt="image" src="https://github.com/user-attachments/assets/7a969ed2-2cad-4368-8e85-65441fcf46d1" />
+
+  Modify KMS permissions:
+
+  <img width="585" height="472" alt="image" src="https://github.com/user-attachments/assets/9c730622-25f6-4f1c-8f81-d134da0cb8a1" />
+
+  Check results in Central Account:
+  
+  <img width="680" height="544" alt="image" src="https://github.com/user-attachments/assets/2b00bfbb-e939-4efe-9832-b37c407819ea" />
+
+
+</details>
+
+
+# Querying KMS CloudTrail logs with Athena
+
+CloudTrail > Event history > Create Athena table > Storage location: `workshop-kms-s3-cloudtrail-...`
+
+<img width="877" height="107" alt="image" src="https://github.com/user-attachments/assets/b71d56cc-ea10-4e27-8814-6093aa8a4738" />
+
+Set up query result location (button in popup) 
+
+<img width="1646" height="947" alt="image" src="https://github.com/user-attachments/assets/2cfae712-8c51-4ee4-ac9a-eb78223fbaec" />
+
+Generate query:
+<img width="2554" height="1108" alt="image" src="https://github.com/user-attachments/assets/67cab9a5-cd6c-47a6-b455-81cd9c41c1e0" />
+
+<img width="2156" height="995" alt="image" src="https://github.com/user-attachments/assets/e9f15258-8ea9-4b31-876e-9ee580d5dd15" />
+
+<img width="2180" height="779" alt="image" src="https://github.com/user-attachments/assets/2ab2ea4a-5c01-4fdd-a5ee-1aa2f2f83f86" />
+
+
 
 
