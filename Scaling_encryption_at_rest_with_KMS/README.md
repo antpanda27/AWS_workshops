@@ -1,4 +1,4 @@
-<img width="1665" height="1024" alt="image" src="https://github.com/user-attachments/assets/8818c0ff-6c44-463e-942e-1c05a0310afb" /># Setting Up
+# Setting Up
 Create `AWS-KMS-Workshop` stack from `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/EnvironmentTemplate.yaml' --output template.yaml`
 
 Create a central stack in a *different account* using `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/central_template.yaml' --output template.yaml`
@@ -15,43 +15,101 @@ This module continues you on your journey to address the privacy and compliance 
 ## Module 1: Manage and Assign KMS Key to S3 Bucket
 <details>
   
-  1. In the KMS Console, create a key with the following settings:
-     * Key type: Symmetric
-     * Key usage: Encrypt and decrypt
-     * Key alias: cloudtrail-s3-encryption-key
-     * Key administrators: KMS Admin Role
+  1. *Admin role:* In the KMS Console, create a key with the following settings:
+     * Key type: `Symmetric`
+     * Key usage: `Encrypt and decrypt`
+     * Key alias: `cloudtrail-s3-encryption-key`
+     * Key administrators: `WSParticipantRole`
+     * Key users: `WSParticipantRole`
 
-  2. Configure CloudTrail to encrypt log data
-      <img width="1263" height="375" alt="image" src="https://github.com/user-attachments/assets/f613dd63-283b-481b-98fc-6f17d25194de" />
+  2. Configure CloudTrail `workshop-kms-s3` to encrypt log data
+     <img width="1263" height="375" alt="image" src="https://github.com/user-attachments/assets/f613dd63-283b-481b-98fc-6f17d25194de" />
+     * Check `Enabled` for Log file SSE-KMS encryption
+     * Choose `Existing` for Customer Managed AWS KMS Key
+     * Select `cloudtrail-s3-encryption-key`
+       
+     The attempt will result in an error:
+     <img width="1238" height="1146" alt="image" src="https://github.com/user-attachments/assets/1f308600-b574-4799-9a89-5a24c8fb9c86" />
 
-      <img width="1238" height="1146" alt="image" src="https://github.com/user-attachments/assets/1f308600-b574-4799-9a89-5a24c8fb9c86" />
 
-
-      Edit KMS key policy, and retry
-      <img width="1266" height="652" alt="image" src="https://github.com/user-attachments/assets/b2d4765a-5088-4be8-a4cd-ac0fc865491e" />
+     * *Admin role:* Edit KMS key policy, and retry:
+     <img width="1266" height="652" alt="image" src="https://github.com/user-attachments/assets/b2d4765a-5088-4be8-a4cd-ac0fc865491e" />
 
 
   3. Set S3 Bucket encryption
-    <img width="849" height="655" alt="image" src="https://github.com/user-attachments/assets/c7c773ca-7bd2-482d-a894-089927dd56bd" />
-    <img width="1257" height="1005" alt="image" src="https://github.com/user-attachments/assets/1d4ccc64-003f-41b8-bd68-5901fe3cfe14" />
-    <img width="1253" height="714" alt="image" src="https://github.com/user-attachments/assets/107a3aa8-4aa7-4271-8653-2c4a12cebb9d" />
+     <img width="1257" height="1005" alt="image" src="https://github.com/user-attachments/assets/efcdb739-40e8-465a-b22b-c9e515e6d884" />
+
+     Edit `workshop-kms-s3-cloudtrail-...` encryption settings:
+     * Encryption type: `Server-side encryption with AWS Key Management Service keys (SSE-KMS)`
+     * AWS KMS Key: `Choose from your AWS KMS keys`
+     * Select `cloudtrail-s3-encryption-key`
+     * Bucket key: `Enable`
+  
+     <img width="1253" height="714" alt="image" src="https://github.com/user-attachments/assets/107a3aa8-4aa7-4271-8653-2c4a12cebb9d" />
 
   4. Enforce S3 Bucket encryption
-    <img width="1261" height="712" alt="image" src="https://github.com/user-attachments/assets/45e6756a-0561-4b3d-9c61-bed4296b5770" />
+     * Edit Bucket policy:
+     
+    <img width="620" height="455" alt="image" src="https://github.com/user-attachments/assets/923da10a-8fc2-458b-9c2b-8ccbe57577b9" />
 
 </details>
 
 ## Module 2: Remediating unencrypted objects in an S3 bucket
 <details>
-  
-  <img width="959" height="766" alt="image" src="https://github.com/user-attachments/assets/db27c3b6-3e1c-49da-a123-fc452eaa4e17" />
-  <img width="644" height="92" alt="image" src="https://github.com/user-attachments/assets/c6c00462-db90-4335-b80a-72cc3c347cdc" />
-  <img width="982" height="440" alt="image" src="https://github.com/user-attachments/assets/e19be622-0d83-4e77-b515-a7487aac9503" />
-  <img width="1257" height="1172" alt="image" src="https://github.com/user-attachments/assets/d8226f86-7a0c-4540-9f33-8c835f5f9986" />
-  <img width="1243" height="1714" alt="image" src="https://github.com/user-attachments/assets/991b1adc-725d-4a8d-a95f-4e35be915a5b" />
-  <img width="1238" height="1789" alt="image" src="https://github.com/user-attachments/assets/b1bdfecf-cd74-43ae-8ab3-4eb95b4b40d0" />
-  <img width="1254" height="430" alt="image" src="https://github.com/user-attachments/assets/3b349c66-a491-43eb-8bc6-87534c18d0d3" />
-  <img width="1250" height="668" alt="image" src="https://github.com/user-attachments/assets/9832a272-1675-42f8-b838-cc992ce7d490" />
+
+  1. Generate a manifest with the sample Lambda function
+     a. Within AWS CloudShell, execute `aws lambda list-functions` to list lambda functions within the account.
+
+     <img width="959" height="766" alt="image" src="https://github.com/user-attachments/assets/f06e0620-ea4f-405c-9452-93fceeca2ee5" />
+
+     b. Execute function `aws lambda invoke --function-name workshop-kms-s3-s3inventory-\<ACCOUNTNUMBER\> function_output` (Replace `<ACCOUNTNUMBER\>`)
+
+     <img width="644" height="92" alt="image" src="https://github.com/user-attachments/assets/c6c00462-db90-4335-b80a-72cc3c347cdc" />
+    
+     c. View contents and validate manifest file generated by the Lambda function in the bucket `workshop-kms-s3-utility` or executing `cat function_output`
+
+     <img width="982" height="440" alt="image" src="https://github.com/user-attachments/assets/e19be622-0d83-4e77-b515-a7487aac9503" />
+
+  2. Use S3 Batch manager to re-encrypt S3 Objects
+     
+     a. S3 console > Batch Operations > Create job
+     
+     Choose Region and Scope:
+     * Object list: `Use an existing manifest file`
+     * Manifest format: `CSV`
+     * Manifest object: Use `Browse S3` to locate the previously manifest file in the `workshop-kms-s3-cloudtrail-...` bucket.
+     
+       <img width="1257" height="1172" alt="image" src="https://github.com/user-attachments/assets/d8226f86-7a0c-4540-9f33-8c835f5f9986" />
+
+      Choose Operation:
+      * Operation: `Copy`
+      * Copy destination:
+        * Destination bucket type: `General purpose`
+        * Destination: `s3://workshop-kms-s3-cloudtrail-...`
+      * Copy settings: Specify
+      * Storage class: Standard
+      * Server-side encryption:
+        * Server-side encryption: `Specify encryption type`
+        * Encryption type: `SSE-KMS`
+        * AWS KMS key: `Choose from your AWS KMS keys` > choose `cloudtrail-s3-encryption-key`
+        * Bucket key: `Enable`
+    
+      <img width="1243" height="1714" alt="image" src="https://github.com/user-attachments/assets/991b1adc-725d-4a8d-a95f-4e35be915a5b" />
+
+     Configure additional options:
+     * Completion Report:
+       * Generate completion report: `Enabled`
+       * Completion report scope: `All tasks`
+       * Source account: `This AWS account`
+       * Source: `s3://workshop-kms-s3-utility-...`
+     * Permissions: `Choose from existing IAM roles` > choose role with `batch` within the name (generated during the setup)
+     <img width="1238" height="1789" alt="image" src="https://github.com/user-attachments/assets/b1bdfecf-cd74-43ae-8ab3-4eb95b4b40d0" />
+
+     b. Select the new S3 batch manager job and click `Run job` > Confirm details > `Run job` to confirm execution
+     <img width="1254" height="430" alt="image" src="https://github.com/user-attachments/assets/3b349c66-a491-43eb-8bc6-87534c18d0d3" />
+
+     c. Refresh after job completion. Results in 100% failure:
+     <img width="1250" height="668" alt="image" src="https://github.com/user-attachments/assets/9832a272-1675-42f8-b838-cc992ce7d490" />
 
   ### Remediate the S3 manager access issue
   Retrieve the batch role's ARN in the IAM, then edit the previous KMS policy to include access for this role.
@@ -254,7 +312,8 @@ This module continues your journey to address the privacy and compliance challen
 
   Select copy > Create Volume from snapshot > Add key: Name, Value: Encrypted_Volume > Create Volume
   
-  <img width="1665" height="2728" alt="image" src="https://github.com/user-attachments/assets/6f6e3eb6-d6a9-481e-bb84-b2b9032519a2" />
+  <img width="1664" height="1026" alt="image" src="https://github.com/user-attachments/assets/33face1c-1d14-47df-8427-a793e5c0c7ad" />
+
 
 </details>
 
