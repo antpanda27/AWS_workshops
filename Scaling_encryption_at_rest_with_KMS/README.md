@@ -3,6 +3,7 @@ Create `AWS-KMS-Workshop` stack from `curl 'https://static.us-east-1.prod.worksh
 
 Create a central stack in a *different account* using `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/central_template.yaml' --output template.yaml`
 
+
 # S3 Track
 This module continues you on your journey to address the privacy and compliance challenges of the existing configuration. Based on the recommendation of Amazon Web Services architects, you will:
 
@@ -15,14 +16,14 @@ This module continues you on your journey to address the privacy and compliance 
 ## Module 1: Manage and Assign KMS Key to S3 Bucket
 <details>
   
-  1. *Admin role:* In the KMS Console, create a key with the following settings:
+  ### 1.1 *Admin role:* In the KMS Console, create a key with the following settings:
      * Key type: `Symmetric`
      * Key usage: `Encrypt and decrypt`
      * Key alias: `cloudtrail-s3-encryption-key`
      * Key administrators: `WSParticipantRole`
      * Key users: `WSParticipantRole`
 
-  2. Configure CloudTrail `workshop-kms-s3` to encrypt log data
+  ### 1.2 Configure CloudTrail `workshop-kms-s3` to encrypt log data
      <img width="1263" height="375" alt="image" src="https://github.com/user-attachments/assets/f613dd63-283b-481b-98fc-6f17d25194de" />
      * Check `Enabled` for Log file SSE-KMS encryption
      * Choose `Existing` for Customer Managed AWS KMS Key
@@ -36,7 +37,7 @@ This module continues you on your journey to address the privacy and compliance 
      <img width="1266" height="652" alt="image" src="https://github.com/user-attachments/assets/b2d4765a-5088-4be8-a4cd-ac0fc865491e" />
 
 
-  3. Set S3 Bucket encryption
+  ### 1.3 Set S3 Bucket encryption
      <img width="1257" height="1005" alt="image" src="https://github.com/user-attachments/assets/efcdb739-40e8-465a-b22b-c9e515e6d884" />
 
      Edit `workshop-kms-s3-cloudtrail-...` encryption settings:
@@ -47,7 +48,7 @@ This module continues you on your journey to address the privacy and compliance 
   
      <img width="1253" height="714" alt="image" src="https://github.com/user-attachments/assets/107a3aa8-4aa7-4271-8653-2c4a12cebb9d" />
 
-  4. Enforce S3 Bucket encryption
+  ### 1.4 Enforce S3 Bucket encryption
      * Edit Bucket policy:
      
     <img width="620" height="455" alt="image" src="https://github.com/user-attachments/assets/923da10a-8fc2-458b-9c2b-8ccbe57577b9" />
@@ -57,7 +58,7 @@ This module continues you on your journey to address the privacy and compliance 
 ## Module 2: Remediating unencrypted objects in an S3 bucket
 <details>
 
-  1. Generate a manifest with the sample Lambda function
+  ### 2.1 Generate a manifest with the sample Lambda function
      a. Within AWS CloudShell, execute `aws lambda list-functions` to list lambda functions within the account.
 
      <img width="959" height="766" alt="image" src="https://github.com/user-attachments/assets/f06e0620-ea4f-405c-9452-93fceeca2ee5" />
@@ -70,7 +71,7 @@ This module continues you on your journey to address the privacy and compliance 
 
      <img width="982" height="440" alt="image" src="https://github.com/user-attachments/assets/e19be622-0d83-4e77-b515-a7487aac9503" />
 
-  2. Use S3 Batch manager to re-encrypt S3 Objects
+  ### 2.2 Use S3 Batch manager to re-encrypt S3 Objects
      
      a. S3 console > Batch Operations > Create job
      
@@ -111,30 +112,41 @@ This module continues you on your journey to address the privacy and compliance 
      c. Refresh after job completion. Results in 100% failure:
      <img width="1250" height="668" alt="image" src="https://github.com/user-attachments/assets/9832a272-1675-42f8-b838-cc992ce7d490" />
 
-  ### Remediate the S3 manager access issue
+  ### 2.3 Remediate the S3 manager access issue
   Retrieve the batch role's ARN in the IAM, then edit the previous KMS policy to include access for this role.
   <img width="1270" height="289" alt="image" src="https://github.com/user-attachments/assets/0269ed1c-8d6c-4e07-b1c7-7b7ecdc4ae30" />
   <img width="1261" height="926" alt="image" src="https://github.com/user-attachments/assets/0c7f5173-ef63-47f1-be07-2226985d33ff" />
-  Copy S3 Batch Job and rerun.
+  
+  Copy S3 Batch Job and rerun
 
   <img width="1244" height="416" alt="image" src="https://github.com/user-attachments/assets/de00ed70-e9e8-4650-9e31-7d6eb8260dff" />
   <img width="1252" height="875" alt="image" src="https://github.com/user-attachments/assets/3c7906fe-4968-445f-91f7-40f3b8a3eb07" />
 
 </details>
 
-## Module 3
-### Sharing an Encrypted S3 Bucket
+## Module 3: Sharing an Encrypted S3 Bucket
 
 <details>
   
+  ### 3.1 Sharing an Encrypted S3 Bucket
+  a. Select `workshop-kms-s3-cloudtrail...` bucket and copy ARN
   <img width="1131" height="457" alt="image" src="https://github.com/user-attachments/assets/2deb1617-03e5-47cd-a79a-69b0ef226e19" />
+
+  b. Edit the Bucket Policy
   <img width="1287" height="414" alt="image" src="https://github.com/user-attachments/assets/36ef9608-128e-4ade-8899-78ad62629995" />
+
+  c. Using the account with the central stack, open the URL from the Stack Output
   <img width="1192" height="578" alt="image" src="https://github.com/user-attachments/assets/21e08691-25c8-4431-b0cf-9ea5ed857913" />
   <img width="857" height="507" alt="image" src="https://github.com/user-attachments/assets/6b80e696-218f-4bf5-b13e-86d0d60e9eb3" />
+
+  d. Paste in the bucket ARN into S3 Bucket Name input (results in failure)
   <img width="729" height="627" alt="image" src="https://github.com/user-attachments/assets/d9536187-c896-4907-ac61-71a1f5ea34d5" />
 
-### Provide Cross Account KMS Access
+  ### 3.2 *Admin Role:* Provide Cross Account KMS Access
+  Edit `cloudtrail-s3-encryption-key` KMS key:
   <img width="1288" height="636" alt="image" src="https://github.com/user-attachments/assets/d01788cf-7081-47f6-9414-964f0e45a56c" />
+
+  Return to the central stack output URL, and retry:
   <img width="864" height="588" alt="image" src="https://github.com/user-attachments/assets/36aa5850-f990-4203-96db-118b0f958ed2" />
 
 </details>
@@ -153,7 +165,7 @@ This module continues your journey to address the privacy and compliance challen
 ## Module 1: Manage and Assign KMS Key to RDS Instance
 <details>
 
-  ### Configure a KMS CMK and Check RDS Compliance
+  ### *Admin Role:* Configure a KMS CMK and Check RDS Compliance
   Create a CMK with the following:
   * Key type: Symmetric
   * Key usage: Encrypt and decrypt
@@ -162,9 +174,9 @@ This module continues your journey to address the privacy and compliance challen
     
   <img width="1643" height="935" alt="image" src="https://github.com/user-attachments/assets/ef31633f-d7a6-46c1-ac24-1044d9013edf" />
 
-  **Review current resources for compliance**
-  Switch to ProjectRole, to check the AWS Config Rules, and in RDS_Storage_Encrypted, check the noncompliant resource.
-
+  ***ProjectRole:* Review current resources for compliance**
+  Check the AWS Config Rules, and in RDS_Storage_Encrypted, check the noncompliant resource.
+  
   <img width="1489" height="605" alt="image" src="https://github.com/user-attachments/assets/32605b16-1a61-4619-bcd6-56ec446bac37" />
   <img width="1132" height="237" alt="image" src="https://github.com/user-attachments/assets/508b4b7d-c517-4368-acc2-119354a3e1b9" />
   
@@ -173,20 +185,20 @@ This module continues your journey to address the privacy and compliance challen
 ## Module 2: Remediate Unencrypted RDS Instance
 <details>
 
-  ### Create an Encrypted Snapshot
+  ### 2.1 Create an Encrypted Snapshot
   Aurora and RDS Dashboard > Databases > Select the RDS instance > Actions > Take Snapshot > Give a Snapshot name > Take snapshot
   <img width="972" height="533" alt="image" src="https://github.com/user-attachments/assets/c088dce1-dbae-4ad6-b0b6-955586c41272" />
   Copy snapshot > Name snapshot copy > Enable Encryption > Select CMK created in previous step > Copy snapshot
   <img width="1662" height="1019" alt="image" src="https://github.com/user-attachments/assets/75da7078-c451-440a-98c9-c78f0918d1f2" />
 
-  ### Grant KMS access to ProjectRole
-  Using Admin Role:
+  ### 2.2 Grant KMS access to ProjectRole
+  Using *Admin Role*:
   <img width="1651" height="1027" alt="image" src="https://github.com/user-attachments/assets/243da319-85a0-488c-b694-86ddea3833de" />
 
-  Return to ProjectRole, and retry copying snapshot = success
+  Return to *ProjectRole*, and retry copying snapshot = success
   <img width="1230" height="590" alt="image" src="https://github.com/user-attachments/assets/20513935-a04d-48b8-ad9f-015b1c747585" />
 
-  ### Restore Encrypted Snapshot to the RDS Instance
+  ### 2.3 Restore Encrypted Snapshot to the RDS Instance
   Select encrypted snapshot > Actions > Restore snapshot > Input a name for DB Instance > Select single DB instance > Select db.t3.micro
   Scroll down to Encryption. Note - enabled by default = restore encrypted snapshot to unencrypted instance.
   <img width="1661" height="1835" alt="image" src="https://github.com/user-attachments/assets/1823e09e-4d7a-4c36-9114-4b3d292d8230" />
