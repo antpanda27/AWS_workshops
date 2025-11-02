@@ -1,12 +1,25 @@
+# Business Case
+
+As a new security architect for the Amazon Web Services environment within your firm, you receive a request from your governance and compliance department asking you to review and demonstrate privacy controls for data stored in AWS.
+
+Reviewing the results of your Well-Architected review to protect data at rest, you discover that while your company enabled encryption in some areas, the configuration parameters are inconsistent. Additionally, your governance, compliance, and audit team asked you to provide a report on data consumers.
+
+Working with your Amazon Web Services architects, you identify several focus areas.
+
+* Logging and archival. Some CloudTrail logs can contain production data. You need to ensure the controls applied to CloudTrail logs can meet the privacy controls
+* Privacy and Security of data at rest for EC2 instances and data backups of those instances
+* Privacy and Security of data for higher-level services like RDS
+
 # Architecture Diagram
 
 <img width="1844" height="1038" alt="image" src="https://github.com/user-attachments/assets/172a630b-6dd7-4cda-8ecc-7aa377251b7c" />
 
-
 # Setting Up
+Set up an IAM principal role with administrator access to the AWS account.
+
 Using CloudFormation to create a scenario:
 * Create `AWS-KMS-Workshop` stack from `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/EnvironmentTemplate.yaml' --output template.yaml`
-* Create a central stack in a *different account* using `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/central_template.yaml' --output template.yaml`
+* Create a central stack in a ***different** account* using `curl 'https://static.us-east-1.prod.workshops.aws/public/249e5f66-a361-4b1d-8792-92f37d92fb25/static/central_template.yaml' --output template.yaml`
 
 
 # S3 Track
