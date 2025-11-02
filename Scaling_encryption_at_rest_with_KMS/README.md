@@ -9,7 +9,7 @@ Working with your Amazon Web Services architects, you identify several focus are
 * Logging and archival. Some CloudTrail logs can contain production data. You need to ensure the controls applied to CloudTrail logs can meet the privacy controls
 * Privacy and Security of data at rest for EC2 instances and data backups of those instances
 * Privacy and Security of data for higher-level services like RDS
-* 
+
 [Source: AWS Business Case](https://catalog.us-east-1.prod.workshops.aws/workshops/05f16f1a-0bbf-45a7-a304-4fcd7fca3d1f/en-US/getting-started)
 
 # Architecture Diagram
