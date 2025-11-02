@@ -183,6 +183,7 @@ This module continues your journey to address the privacy and compliance challen
 * Share an encrypted RDS instance with another AWS Account
 
 <details>
+  
 ## Module 1: Manage and Assign KMS Key to RDS Instance
 
 ### *Admin Role:* Configure a KMS CMK and Check RDS Compliance
